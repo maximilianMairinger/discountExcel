@@ -19,7 +19,7 @@ from popup import inquire
     #     self.handelClick(self.sender().id)
     #   )
 
-class FirstWindow(QtWidgets.QWidget):
+class Window(QtWidgets.QWidget):
 
   def __init__(self):
     super().__init__()
@@ -66,8 +66,9 @@ class FirstWindow(QtWidgets.QWidget):
       self.poi.types.append(txt)
       self.poi.save()
 
-    
-    inquire("Why are you running", self).then(then)
+    def validator(s: str):
+      return s not in self.poi.types
+    inquire("Column name", validator, self).then(then)
 
   def tableChanged(self, x, y): 
     setattr(self.poi.data[x], self.poi.types[y], self.table.item(x, y).text())
@@ -111,7 +112,7 @@ class FirstWindow(QtWidgets.QWidget):
 
 if __name__ == "__main__": 
   app = QtWidgets.QApplication(sys.argv)
-  mywidget = FirstWindow()
+  mywidget = Window()
   mywidget.show()
   sys.exit(app.exec_())
 
