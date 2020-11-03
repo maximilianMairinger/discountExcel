@@ -28,9 +28,11 @@ class UPOI:
 
   def save(self): 
     s = splitter.join(self.types) + line
-    for d in self.data:
-      for t in self.types:
-        s += getattr(d, t) + splitter
+    for ob in self.data:
+      for name in self.types:
+        if not hasattr(ob, name): 
+          setattr(ob, name, "")
+        s += getattr(ob, name) + splitter
       
       s = s[:-1]
       s += line

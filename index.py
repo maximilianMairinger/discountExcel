@@ -7,10 +7,7 @@ from popup import inquire
 
 
 # poi = UPOI("data/test")
-# print(poi.data[1].name)
-# poi.file.filePath("data/new")
-# poi.data[2].name = "rod"
-# poi.save()
+# print(poi.data[2].name)
 
 
 
@@ -58,6 +55,7 @@ class FirstWindow(QtWidgets.QWidget):
     
   def addRow(self): 
     self.table.setRowCount(self.table.rowCount() + 1)
+    self.poi.data.append(Object())
     
 
   def addCol(self): 
@@ -65,6 +63,9 @@ class FirstWindow(QtWidgets.QWidget):
       count = self.table.columnCount()
       self.table.setColumnCount(count + 1)
       self.table.setHorizontalHeaderItem(count, QTableWidgetItem(txt))
+      self.poi.types.append(txt)
+      self.poi.save()
+
     
     inquire("Why are you running", self).then(then)
 
@@ -77,11 +78,11 @@ class FirstWindow(QtWidgets.QWidget):
   def _createTable(self): 
     poi = self.poi
     
-
     self.table = table = QTableWidget()
-    table.setRowCount(len(poi.types))
-    table.setColumnCount(len(poi.data))
     table.setColumnWidth(1, 300)
+
+    table.setColumnCount(len(poi.types))
+    table.setRowCount(len(poi.data))
 
     for i in range(len(poi.types)):
       table.setHorizontalHeaderItem(i, QTableWidgetItem(poi.types[i]))
