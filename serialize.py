@@ -1,9 +1,49 @@
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+import os
+from typing import *
+
+
+class FsHandler(FileSystemEventHandler):
+  def __init__(self, filePath, updateCallback, moveCallback):
+    self.filePath = filePath
+    self.lastFileContent = ""
+    self.updateCallback = updateCallback
+    self.moveCallback = moveCallback
+
+  def on_deleted(self, event):
+    # print("del")
+    if self.filePath == event.src_path:
+      self.updateCallback("")
+
+  def on_modified(self, event):
+    # print("mod")
+    if self.filePath == event.src_path:
+      content = open(self.filePath, "r").read()
+      if self.lastFileContent != content:
+        self.lastFileContent = content
+        self.updateCallback(content)
+
+  def on_moved(self, event):
+    # print("mov")
+    if self.filePath == event.src_path:
+      print("event.dest_path")
+      print(event.dest_path)
+      print("event.dest_path")
+      self.moveCallback(event.dest_path)
+
+
+
 class Serialize:
-  def __init__(self, filePath: str, ending: str = None): 
+  def __init__(self, filePath: str, ending: str = None, onChange = None): 
     self._ending = ""
     self._path = ""
+    self._observer = None
+
     self.filePath(filePath, True)
     self.ending(ending, True)
+    if onChange != None: 
+      self.enableLiveFileObserver()
   
   def ending(self, ending = None, dontWrite = False): 
     if ending == None: 
@@ -14,7 +54,24 @@ class Serialize:
       self._ending = ending
       self._changeFilePath(self.filePath(), ending, dontWrite)
 
+  def enableLiveFileObserver(self, onChange):
+    if self._observer == None: 
+      def onChange(content):
+        nonlocal onChange
+        onChange(content)
+      
+      def onFileMoved(to):
+        self.filePath(to)
 
+      event_handler = FsHandler(self._path, onChange, onFileMoved)
+      self._observer = observer = Observer()
+      observer.schedule(event_handler, os.path.dirname(os.path.realpath(self._path)), True)
+      observer.start()
+
+  def disableLiveFileObserver(self):
+    if self._observer != None: 
+      self._observer.stop()
+      self._observer = None
 
   def filePath(self, filePath = None, dontWrite = False): 
     if filePath == None: 
@@ -34,11 +91,19 @@ class Serialize:
       to = filePath
     
     if (self._path != to):
+      observerActive = self._observer != None
+      
+      if observerActive: 
+        self.disableLiveFileObserver()
       if (not dontWrite):
-         read = self.read()
-      self._path = to
+        read = self.read()
+
+      self._path = os.path.normpath(to)
+
       if (not dontWrite):
-         self.write(read)
+        self.write(read)
+      if observerActive: 
+        self.enableLiveFileObserver()
 
   def read(self):
     return open(self._path, "r").read()
