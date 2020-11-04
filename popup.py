@@ -69,23 +69,26 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
   def inq(res, rej):
     # Make new window (popup) and show it as new window
     dia = QDialog(parent)
+    # Set metadata
     dia.setWindowTitle(title)
     dia.setFixedWidth(500)
     dia.setFixedHeight(200)
 
+    # layout
     box = QVBoxLayout()
     dia.setLayout(box)
     box.addWidget(QLabel(quest))
+    # init input box with button
     inputBoxContainer = QtWidgets.QWidget()
     inputBox = QHBoxLayout()
     inputBoxContainer.setLayout(inputBox)
     box.addWidget(inputBoxContainer)
+    # init input field
     inputField = QLineEdit()
     inputBox.addWidget(inputField)
+    # confirm button
     confButton = QPushButton("Confirm")
     inputBox.addWidget(confButton)
-
-    inputField.setStyleSheet("color: red;")
     
 
     valid = False
@@ -140,7 +143,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
 
     confButton.clicked.connect(confirm)
     
-
+    # validate input
     def onValueChange(): 
       nonlocal valid
       nonlocal cancelCurrentToggle
@@ -181,12 +184,14 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
         
       
 
-    
+    # Gets called on cancel intent
     def cancel(): 
       nonlocal cancelCurrentToggle
       if cancelCurrentToggle != None:
         cancelCurrentToggle()
+      # Reject promise
       rej(Exception("blur"))
+      # Hide window
       dia.hide()
 
     # When the window is blurred cancel user input
