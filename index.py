@@ -103,10 +103,11 @@ class Window(QtWidgets.QWidget):
     # Save Button is inited and appended properly here
     saveAs = QPushButton("Save as")
     def saveAsFunc():
+      # Open file dialog; where to save
       root = tk.Tk()
       root.withdraw()
-
       filePath = filedialog.asksaveasfile().name
+
       self.poi.file.filePath(filePath)
       self.save()
 
@@ -116,21 +117,26 @@ class Window(QtWidgets.QWidget):
     # Save Button is inited and appended properly here
     openButton = QPushButton("Open")
     def openFunc():
+      # Open file dialog; where to open
       root = tk.Tk()
       root.withdraw()
-
       filePath = filedialog.askopenfile().name
+
+      # Set filepath without write
       self.poi.file.filePath(filePath, True)
+      # Parse poi again
       self.poi.parse()
       
+      # Create table with new POI
       table1 = self.table
       self._createTable()
       table2 = self.table
       vBoxLayout.replaceWidget(table1, table2)
 
-
     openButton.clicked.connect(openFunc)
 
+
+    # Append to buttons to botBox
     botBox.addWidget(addRowButton)
     botBox.addWidget(addColButton)
     botBox.addWidget(saveButton)
