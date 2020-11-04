@@ -4,6 +4,10 @@ import sys
 from upoi import *
 from ob import *
 from popup import inquire
+import tkinter as tk
+from tkinter import filedialog
+
+
 
 
 # poi = UPOI("data/test")
@@ -64,7 +68,7 @@ class Window(QtWidgets.QWidget):
     # this app was called (like double click on a file)
 
     header = ["Nummer", "Kategorie", "Name", "Icon-Bez", "Latitude", "Longitude", "Länderkennzeichen", "Unbekannt", "Unbekannt 2", "Unbekannt 3", "Postleitzahl", "Ort", "Straße", "Hausnummer", "Information", "Telefonnummer"]
-    self.poi = UPOI("data/qqq", header, useOnFileChanged)
+    self.poi = UPOI("data/data", header, useOnFileChanged)
     
     
     
@@ -96,9 +100,43 @@ class Window(QtWidgets.QWidget):
       self.save()
     )
 
+    # Save Button is inited and appended properly here
+    saveAs = QPushButton("Save as")
+    def saveAsFunc():
+      root = tk.Tk()
+      root.withdraw()
+
+      filePath = filedialog.asksaveasfile().name
+      self.poi.file.filePath(filePath)
+      self.save()
+
+
+    saveAs.clicked.connect(saveAsFunc)
+
+    # Save Button is inited and appended properly here
+    openButton = QPushButton("Open")
+    def openFunc():
+      root = tk.Tk()
+      root.withdraw()
+
+      filePath = filedialog.askopenfile().name
+      self.poi.file.filePath(filePath, True)
+      self.poi.parse()
+      
+      table1 = self.table
+      self._createTable()
+      table2 = self.table
+      vBoxLayout.replaceWidget(table1, table2)
+
+
+    openButton.clicked.connect(openFunc)
+
     botBox.addWidget(addRowButton)
     botBox.addWidget(addColButton)
     botBox.addWidget(saveButton)
+    botBox.addWidget(saveAs)
+    botBox.addWidget(openButton)
+
 
   # Save the current poi to file
   def save(self):

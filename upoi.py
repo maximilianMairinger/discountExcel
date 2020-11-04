@@ -11,18 +11,18 @@ class UPOI:
     if onChange != None:
       def c(content):
         nonlocal changeCB
-        self._parse(content)
+        self.parse(content)
         onChange()
 
       changeCB = c
         
 
     self.file = Serialize(filePath, "upoi", changeCB)
-    raw = self.file.read()
-    self._parse(raw)
+    self.parse()
     
   # Parse the string
-  def _parse(self, raw: str):
+  def parse(self):
+    raw = self.file.read()
     while raw[-1:] == "\n" or raw[-1:] == " " or raw[-1:] == "\t":
       raw = raw[:-1]
 
