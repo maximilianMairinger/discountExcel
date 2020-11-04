@@ -5,9 +5,22 @@ line = "\n"
 splitter = "|"
 
 class UPOI:
-  def __init__(self, filePath): 
-    self.file = Serialize(filePath, "upoi")
-    raw: str = self.file.read()
+  def __init__(self, filePath, onChange = None): 
+    changeCB = None
+    if onChange != None:
+      def c(content):
+        nonlocal changeCB
+        self._parse(content)
+        onChange()
+
+      changeCB = c
+        
+
+    self.file = Serialize(filePath, "upoi", changeCB)
+    raw = self.file.read()
+    self._parse(raw)
+    
+  def _parse(self, raw: str):
     while raw[-1:] == "\n" or raw[-1:] == " " or raw[-1:] == "\t":
       raw = raw[:-1]
 
@@ -23,8 +36,6 @@ class UPOI:
       q = d.split(splitter)
       for i in range(len(q)):
         setattr(o, self.types[i], q[i])
-
-
 
   def save(self): 
     s = splitter.join(self.types) + line
