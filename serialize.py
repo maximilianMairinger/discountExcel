@@ -45,6 +45,7 @@ class Serialize:
     if onChange != None: 
       self.enableLiveFileObserver(onChange)
   
+  # Set the ending of the file
   def ending(self, ending = None, dontWrite = False): 
     if ending == None: 
       return self._ending
@@ -54,7 +55,7 @@ class Serialize:
       self._ending = ending
       self._changeFilePath(self.filePath(), ending, dontWrite)
 
-
+  # Enable the fileobserver
   def enableLiveFileObserver(self, onChange = None):
     if self._observer == None: 
       if onChange == None:
@@ -75,11 +76,13 @@ class Serialize:
       observer.schedule(event_handler, os.path.dirname(os.path.realpath(self._path)), True)
       observer.start()
 
+  # Disable the fileobserver
   def disableLiveFileObserver(self):
     if self._observer != None: 
       self._observer.stop()
       self._observer = None
 
+  # Set the file path
   def filePath(self, filePath = None, dontWrite = False): 
     if filePath == None: 
       return self._filePath
@@ -112,10 +115,12 @@ class Serialize:
       if observerActive: 
         self.enableLiveFileObserver()
 
+
+  # Read from file
   def read(self):
     return open(self._path, "r").read()
 
-
+  # write to file
   def write(self, data):
     observerActive = self._observer != None
     if observerActive:

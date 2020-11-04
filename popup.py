@@ -11,13 +11,15 @@ import re
 from threading import Timer
 
 
-
+# Decorator function to match to a regex
 def constructAllowRegex(regex): 
   def allowRegex(s: str):
     return not not re.search(regex, s)
 
   return allowRegex
 
+
+# Construct with all sort of regexes
 allowEmail = constructAllowRegex('^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$')
 allowUrl = constructAllowRegex('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$')
 allowSignedNumber = constructAllowRegex('^(-|\+|)\d*(.|)\d\d*$')
@@ -26,9 +28,16 @@ allowSignedInt = constructAllowRegex('^(-|\+|)\d\d*$')
 allowUnsignedInt = constructAllowRegex('^(\+|)\d\d*$')
 
 
+# All inputs are valid function
 def allAllowed(s: str): 
   return True
 
+# Inquire function. Opens a popup
+# Returns a Promise which resolves when the used confirms and does reject when the user cancels. 
+# The popupwindow cancels automatically on cancel. The User cannot confirm if the validator (kind)
+# condition is not met. As kind condition a string out of a couple prefixes are valid, also a function 
+# getting the current user input string and retuirning a "isValid" boolean can be given.
+# kind, parent and title are optional
 def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, title = None):
   if isinstance(kind, QtWidgets.QWidget): 
     parent = kind
@@ -58,6 +67,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
   
 
   def inq(res, rej):
+    # Make new window (popup) and show it as new window
     dia = QDialog(parent)
     dia.setWindowTitle(title)
     dia.setFixedWidth(500)
@@ -82,6 +92,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
 
 
     cancelCurrentToggle = None
+    # Confirm callback, When the usere wants to confirm
     def confirm(): 
       nonlocal valid
       nonlocal cancelCurrentToggle
@@ -97,6 +108,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
         toggleBool = True
         times = 5
 
+        # Toggle red when not correct. This is a recursive function
         def toggle(): 
           nonlocal toggleBool
           nonlocal cancelCurrentToggle
@@ -153,7 +165,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
 
 
     
-
+    # Decorator: WHen elems are blurred call callback
     def blurElem(elems, fn): 
       def f(e = None): 
         foc = False
@@ -169,7 +181,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
         
       
 
-
+    
     def cancel(): 
       nonlocal cancelCurrentToggle
       if cancelCurrentToggle != None:
@@ -177,6 +189,7 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
       rej(Exception("blur"))
       dia.hide()
 
+    # When the window is blurred cancel user input
     blurElem([confButton, inputField], cancel)
     
     
