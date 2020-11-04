@@ -64,7 +64,6 @@ class Serialize:
           return
       self.lastOnChange = onChange
       def change(content):
-        print("new")
         nonlocal onChange
         onChange(content)
       
