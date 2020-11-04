@@ -33,7 +33,7 @@ class Window(QtWidgets.QWidget):
 
     # A flag if all autosaving features shall be inited. 
     # At this point there is nothing changing this.
-    self.autoSave = True
+    self.autoSave = False
 
     # Create the base Boxlayout and attach it ti self
     vBoxLayout = QVBoxLayout()
@@ -62,7 +62,9 @@ class Window(QtWidgets.QWidget):
     # Declare and init a UPOI instance which is connected to a specified file.
     # In the future this hardcoded string could be replace by the context in which 
     # this app was called (like double click on a file)
-    self.poi = UPOI("data/test", useOnFileChanged)
+
+    header = ["Nummer", "Kategorie", "Name", "Icon-Bez", "Latitude", "Longitude", "Länderkennzeichen", "Unbekannt", "Unbekannt 2", "Unbekannt 3", "Postleitzahl", "Ort", "Straße", "Hausnummer", "Information", "Telefonnummer"]
+    self.poi = UPOI("data/qqq", header, useOnFileChanged)
     
     
     
@@ -88,8 +90,19 @@ class Window(QtWidgets.QWidget):
     botBoxContainer.setLayout(botBox)
     vBoxLayout.addWidget(botBoxContainer)
 
+    # Save Button is inited and appended properly here
+    saveButton = QPushButton("Save")
+    saveButton.clicked.connect(lambda : 
+      self.save()
+    )
+
     botBox.addWidget(addRowButton)
     botBox.addWidget(addColButton)
+    botBox.addWidget(saveButton)
+
+  # Save the current poi to file
+  def save(self):
+    self.poi.save()
 
   # Gets called when a row wants to be added by the user
   def addRow(self): 
