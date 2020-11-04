@@ -1,3 +1,5 @@
-# Just a generic object class
 class Object(object):
+    """
+    Just a generic object class
+    """
     pass

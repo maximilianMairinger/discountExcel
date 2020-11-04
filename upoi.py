@@ -4,10 +4,13 @@ from ob import *
 line = "\n"
 splitter = "|"
 
-# UPOI (CSV) File, bound to location. 
-# Parsing on file change.
-# Custom header (not reflected in file) can be given
+
 class UPOI:
+  """
+  UPOI (CSV) File, bound to location. 
+  Parsing on file change.
+  Custom header (not reflected in file) can be given
+  """
   def __init__(self, filePath, predefinedHeader = None, onChange = None): 
     changeCB = None
     self._predefinedHeader = predefinedHeader
@@ -23,8 +26,10 @@ class UPOI:
     self.file = Serialize(filePath, "upoi", changeCB)
     self.parse()
     
-  # Parse the string
   def parse(self):
+    """
+    Parse the string
+    """
     raw = self.file.read()
 
     # Padding
@@ -57,8 +62,10 @@ class UPOI:
         setattr(o, self.types[i], q[i])
 
 
-  # Save the file
   def save(self): 
+    """
+    Save the file
+    """
     if self._predefinedHeader == None:
       s = splitter.join(self.types) + line
     else:

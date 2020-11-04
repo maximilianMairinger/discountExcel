@@ -11,8 +11,10 @@ import re
 from threading import Timer
 
 
-# Decorator function to match to a regex
 def constructAllowRegex(regex): 
+  """
+  Decorator function to match to a regex
+  """
   def allowRegex(s: str):
     return not not re.search(regex, s)
 
@@ -32,13 +34,15 @@ allowUnsignedInt = constructAllowRegex('^(\+|)\d\d*$')
 def allAllowed(s: str): 
   return True
 
-# Inquire function. Opens a popup
-# Returns a Promise which resolves when the used confirms and does reject when the user cancels. 
-# The popupwindow cancels automatically on cancel. The User cannot confirm if the validator (kind)
-# condition is not met. As kind condition a string out of a couple prefixes are valid, also a function 
-# getting the current user input string and retuirning a "isValid" boolean can be given.
-# kind, parent and title are optional
 def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, title = None):
+  """
+  Inquire function. Opens a popup
+  Returns a Promise which resolves when the used confirms and does reject when the user cancels. 
+  The popupwindow cancels automatically on cancel. The User cannot confirm if the validator (kind)
+  condition is not met. As kind condition a string out of a couple prefixes are valid, also a function 
+  getting the current user input string and retuirning a "isValid" boolean can be given.
+  kind, parent and title are optional
+  """
   if isinstance(kind, QtWidgets.QWidget): 
     parent = kind
     kind = allAllowed
@@ -67,6 +71,12 @@ def inquire(quest: str, kind: Union[Callable, str] = allAllowed, parent = None, 
   
 
   def inq(res, rej):
+    """
+    Inquiry function
+
+    :param: res: Promise resolve function
+    :param: rej: Promise reject function
+    """
     # Make new window (popup) and show it as new window
     dia = QDialog(parent)
     # Set metadata

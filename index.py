@@ -24,10 +24,12 @@ from tkinter import filedialog
     #   )
 
 
-# Window is the base Widget, used as a Window (below)
-# for this application
+# 
 class Window(QtWidgets.QWidget):
-
+  """
+  Window is the base Widget, used as a Window (below)
+  for this application
+  """
   
   def __init__(self):
     super().__init__()
@@ -44,10 +46,12 @@ class Window(QtWidgets.QWidget):
     self.setLayout(vBoxLayout)
 
 
-    # This gets called when there is a change detected originating from the file
-    # The idea was to rerender the complete table. But sadly I get some Multithreading errors
-    # and the vBoxLayout#replaceWidget method does not work like thought. 
     def onFileChange():
+      """
+      This gets called when there is a change detected originating from the file
+      The idea was to rerender the complete table. But sadly I get some Multithreading errors
+      and the vBoxLayout#replaceWidget method does not work like thought. 
+      """
       print("file originating change")
 
       nonlocal vBoxLayout
@@ -144,12 +148,18 @@ class Window(QtWidgets.QWidget):
     botBox.addWidget(openButton)
 
 
-  # Save the current poi to file
+  
   def save(self):
+    """
+    Save the current poi to file
+    """
     self.poi.save()
 
-  # Gets called when a row wants to be added by the user
+  
   def addRow(self): 
+    """
+    Gets called when a row wants to be added by the user
+    """
     # Change the gui table accordingly
     self.table.setRowCount(self.table.rowCount() + 1)
     # Change poi accordingly
@@ -161,8 +171,14 @@ class Window(QtWidgets.QWidget):
   # Gets called when a col wants to be added by the user
   # Here a column name must be inquired
   def addCol(self): 
-    # Gets called when the inquiry is successfully finished by the user
+    """
+    Gets called when a col wants to be added by the user
+    Here a column name must be inquired
+    """
     def then(txt): 
+      """
+      Gets called when the inquiry is successfully finished by the user
+      """
       # get needed data (the col count)
       count = self.table.columnCount()
       # Change the gui table accordingly
@@ -175,26 +191,37 @@ class Window(QtWidgets.QWidget):
       if (self.autoSave): 
         self.poi.save()
 
-    # Validator to ensure no column names are added twice
-    # This gets called very often, thus we must ensure that 
-    # it is very fast.
     def validator(s: str):
+      """
+      Validator to ensure no column names are added twice
+      This gets called very often, thus we must ensure that 
+      it is very fast.
+
+      :param: s: the current content
+      """
       return s not in self.poi.types
 
     # Ask the user for the col name. When the user cancels the then callback will not be called
     inquire("Column name", validator, self).then(then)
 
-  # This gets called every time a table cell gets changed by the user
+  
   def tableChanged(self, x, y): 
-      # Set the according attr into the parsed poi object.
+    """
+    This gets called every time a table cell gets changed by the user
+    :param: x: x-coordinate
+    :param: y: y-coordinate
+    """
+    # Set the according attr into the parsed poi object.
     setattr(self.poi.data[x], self.poi.types[y], self.table.item(x, y).text())
 
     # Save to file when autosave flag is set
     if (self.autoSave): 
       self.poi.save()
 
-  # Just a helper function to create a new table with the current poi object.
   def _createTable(self): 
+    """
+    Just a helper function to create a new table with the current poi object.
+    """
     poi = self.poi
     
     self.table = table = QTableWidget()
