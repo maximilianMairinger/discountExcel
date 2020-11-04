@@ -19,16 +19,36 @@ from popup import inquire
     #     self.handelClick(self.sender().id)
     #   )
 
+
+# Window is the base Widget, used as a Window (below)
+# for this application
 class Window(QtWidgets.QWidget):
 
+  
   def __init__(self):
     super().__init__()
+    # Init Window parameters like title and size
     self.setWindowTitle("Excel")
     self.setGeometry(500, 500, 2000, 1000)
 
 
-    self.poi = UPOI("data/test")
+
+    
     vBoxLayout = QVBoxLayout()
+
+    def onFileChange():
+      print("file originating change")
+
+      nonlocal vBoxLayout
+      nonlocal self
+      table1 = self.table
+      self._createTable()
+      table2 = self.table
+      vBoxLayout.replaceWidget(table1, table2)
+
+        
+    self.poi = UPOI("data/test", onFileChange)
+    
     self.setLayout(vBoxLayout)
 
     self.autoSave = True
@@ -109,7 +129,7 @@ class Window(QtWidgets.QWidget):
 
         
 
-
+# Here the Window class (above) gets inited and started as client window
 if __name__ == "__main__": 
   app = QtWidgets.QApplication(sys.argv)
   mywidget = Window()
